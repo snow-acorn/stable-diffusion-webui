@@ -137,6 +137,8 @@ def run_pip(command, desc=None, live=default_command_live):
     index_url_line = f' --index-url {index_url}' if index_url != '' else ''
     return run(f'"{python}" -m pip {command} --prefer-binary{index_url_line}', desc=f"Installing {desc}", errdesc=f"Couldn't install {desc}", live=live)
 
+def run_numpy_reinstall(desc=None, live=default_command_live):
+    return run(f'"{python}" -m pip install --force-reinstall -v "numpy==1.26.4"', desc=f"Re-Installing {desc}", errdesc=f"Couldn't re-install numpy", live=live)
 
 def check_run_python(code: str) -> bool:
     result = subprocess.run([python, "-c", code], capture_output=True, shell=False)
@@ -406,6 +408,8 @@ def prepare_environment():
     if args.update_all_extensions:
         git_pull_recursive(extensions_dir)
         startup_timer.record("update extensions")
+
+    run_numpy_reinstall("numpy==1.26.4")
 
     if "--exit" in sys.argv:
         print("Exiting because of --exit argument")
